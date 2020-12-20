@@ -35,9 +35,9 @@ app.get('/rovers', async (req, res) => {
 app.get('/rovers/:roverName', async (req, res) => {
   const { roverName } = req.params;
   const result = await fns.getRovers(roverName);
-  return res.send({
-    data: result,
-  });
+  const base = result[0];
+  const photos = await fns.getPhotosFor(roverName, base.max_date);
+  return res.send(Object.assign(base, photos));
 });
 
 app.get('/rovers/:roverName/photos', async (req, res) => {

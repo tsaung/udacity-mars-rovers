@@ -53,7 +53,7 @@ const App = (state) => {
   const nav = Nav(pages, active, changeRover);
   return `
         <header>
-        ${CurrentRoverInfo(selected_rover)}
+        <h1>Mars Rovers</h1>
         </header>
         <nav>
           ${nav}
@@ -144,10 +144,9 @@ const getRover = (name) => {
     fetch('http://localhost:3000/rovers/' + name)
       .then((res) => res.json())
       .then((roverInfo) => {
-        const data = roverInfo.data[0];
         updateStore(store, {
-          current_rover_data: data,
-          rovers_data: store.get('rovers_data').set(name, data),
+          current_rover_data: roverInfo,
+          rovers_data: store.get('rovers_data').set(name, roverInfo),
         });
       });
   }
