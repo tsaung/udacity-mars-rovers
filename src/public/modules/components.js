@@ -33,7 +33,7 @@ export const Nav = (menus, active = '') => {
   });
 
   return ul(result.join(''), {
-    class: ['nav', 'nav-tabs'],
+    class: ['nav'],
     id: 'roverTabs',
     role: 'tablist',
   });

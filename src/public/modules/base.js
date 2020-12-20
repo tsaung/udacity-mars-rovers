@@ -32,10 +32,8 @@ export const createElems = (baseFn) => {
 export const addEventListenerTo = (elms, ev, evFn) => {
   if (elms.length) {
     Array.prototype.forEach.call(elms, (el) => {
-      addEventListenerTo(el, ev, evFn);
+      el.addEventListener(ev, evFn);
     });
-  } else {
-    elms.addEventListener(ev, evFn);
   }
 };
 

@@ -24,7 +24,7 @@ const root = document.getElementById('root');
  * @param {Object} newState
  */
 const updateStore = (state, newState) => {
-  store = Immutable.mergeDeep(state, Immutable.Map(newState));
+  store = Immutable.merge(state, Immutable.Map(newState));
   render(root, store);
 };
 
@@ -41,16 +41,14 @@ const render = async (root, state) => {
 
 // create content
 const App = (state) => {
-  const {
-    apod,
-    user,
-    rovers,
-    selected_rover,
-    current_rover_data,
-  } = state.toObject();
+  const { apod, rovers, selected_rover, current_rover_data } = state.toObject();
   const active = selected_rover || 'home';
   const pages = rovers.map((p) => p.toLowerCase());
   const nav = Nav(pages, active, changeRover);
+  if (!apod) {
+    getImageOfTheDay();
+    return `<header><h1>Loading...</h1></header>`;
+  }
   return `
         <header>
         <h1>Mars Rovers</h1>
@@ -123,9 +121,7 @@ const ImageOfTheDay = (apod) => {
 const changeRover = (name) => {
   getRover(name);
 };
-const getImageOfTheDay = (state) => {
-  let { apod } = state;
-
+const getImageOfTheDay = () => {
   fetch(`http://localhost:3000/apod`)
     .then((res) => res.json())
     .then((apod) => updateStore(store, { apod }));
@@ -150,9 +146,4 @@ const getRover = (name) => {
         });
       });
   }
-};
-const getRovers = () => {
-  fetch('http://localhosst:3000/rovers')
-    .then((res) => res.json())
-    .then((rovers) => updateStore(store, { rovers_data: rovers }));
 };
