@@ -12,7 +12,7 @@ export const CurrentRoverInfo = (detail) => {
  * @param  {String} active
  */
 export const Nav = (menus, active = '') => {
-  const defaultLinkClasses = ['nav-link'];
+  const defaultLinkClasses = ['nav-item'];
 
   const result = menus.map((m) => {
     const linkClasses = [...defaultLinkClasses];
@@ -21,14 +21,13 @@ export const Nav = (menus, active = '') => {
     }
     const link = a(m, {
       id: m + '-tab',
-      class: linkClasses,
       href: `#${m}`,
       role: 'tab',
       'data-toggle': 'tab',
       'aria-controls': m,
     });
 
-    const listItem = li(link, { class: 'nav-item' });
+    const listItem = li(link, { class: linkClasses });
     return listItem;
   });
 

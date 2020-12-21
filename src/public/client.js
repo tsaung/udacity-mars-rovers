@@ -31,7 +31,7 @@ const updateStore = (state, newState) => {
 const render = async (root, state) => {
   root.innerHTML = App(state);
   addEventListenerTo(
-    document.getElementsByClassName('nav-link'),
+    document.getElementsByClassName('nav-item'),
     'click',
     (ev) => {
       changeRover(ev.target.innerHTML);
@@ -42,7 +42,7 @@ const render = async (root, state) => {
 // create content
 const App = (state) => {
   const { apod, rovers, selected_rover, current_rover_data } = state.toObject();
-  const active = selected_rover || 'home';
+  const active = selected_rover;
   const pages = rovers.map((p) => p.toLowerCase());
   const nav = Nav(pages, active, changeRover);
   if (!apod) {
