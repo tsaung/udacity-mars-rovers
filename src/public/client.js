@@ -1,4 +1,4 @@
-import { Main, Nav, Rover } from './modules/components.js';
+import { Main, Nav } from './modules/components.js';
 import { addEventListenerTo } from './modules/base.js';
 
 let store = Immutable.Map({
@@ -43,20 +43,19 @@ const App = (state) => {
   const current_rover_data = rovers_data.get(selected_rover);
   const active = selected_rover;
   const pages = rovers.map((p) => p.toLowerCase());
-  const nav = Nav(pages, active);
   return `
         <header>
         <h1 class="underline">Mars Rovers</h1>
         </header>
         <nav>
-          ${nav}
+          ${Nav(pages, active)}
         </nav>
         <main>
             <section>
               ${Main({ selected_rover, current_rover_data, apod })}
             </section>
         </main>
-        <footer></footer>
+        <footer>Copyleft <span class="copy-left">&copy;</span> Hello World &#128529;. No Rights Reserved</footer>
     `;
 };
 
