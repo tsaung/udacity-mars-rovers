@@ -24,13 +24,17 @@ const updateStore = (state, newState) => {
 
 const render = async (root, state) => {
   root.innerHTML = App(state);
-  addEventListenerTo(
-    document.getElementsByClassName('nav-item'),
-    'click',
-    (ev) => {
-      changeRover(ev.target.innerHTML);
-    }
-  );
+
+  const nav = document.getElementById('nav');
+  if (nav) {
+    const addClickHandlerToNav = addEventListenerTo(nav, 'click');
+    const removeClickHandlerFromNav = addClickHandlerToNav((ev) => {
+      ev.stopPropagation();
+      if(ev.target.classList.contains('nav-item')){
+        changeRover(ev.target.innerHTML);
+      }
+    });
+  }
 };
 
 // create content

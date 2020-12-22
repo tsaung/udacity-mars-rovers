@@ -7,6 +7,11 @@ const fns = require('./fns');
 const app = express();
 const port = 3000;
 
+if (!process.env.API_KEY) {
+  console.warn('No API_KEY configured!');
+  process.exit();
+}
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 

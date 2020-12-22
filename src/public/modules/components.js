@@ -1,6 +1,6 @@
 import { createList, createElement } from './base.js';
 
-const createNavList = createList('ul', { class: ['nav'] });
+const createNavList = createList('ul', { class: ['nav'], id: 'nav' });
 const createImageList = createList('ul', { id: 'gallery' });
 
 /**
@@ -8,7 +8,7 @@ const createImageList = createList('ul', { id: 'gallery' });
  * @param  {String} active
  */
 export const Nav = (menus, active = '') => {
-  let activeIndex = menus.indexOf(active.toLowerCase());
+  const activeIndex = menus.indexOf(active.toLowerCase());
   const result = createNavList(menus, { class: ['nav-item'] }, activeIndex);
   return result;
 };

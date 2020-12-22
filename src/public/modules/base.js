@@ -33,11 +33,9 @@ export const createList = (tagName, attrs = {}) => {
  * @param  {HTMLElement} html
  * @param  {string} tag
  * @param  {Function} listener
+ * @return {Function} Remove added listener
  */
-export const addEventListenerTo = (elms, ev, evFn) => {
-  if (elms.length) {
-    Array.prototype.forEach.call(elms, (el) => {
-      el.addEventListener(ev, evFn);
-    });
-  }
+export const addEventListenerTo = (elem, ev) => fn => {
+  elem.addEventListener(ev,fn);
+  return ()=>elem.removeEventListener(fn);
 };
