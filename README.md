@@ -12,11 +12,11 @@ We have supplied some of the foundational code for you. So follow these steps to
 
 1. We'll start with the typical setup - clone theis repo and install the dependencies
 
- - [ ] To clone the repo, remember to clone just the starter branch:
+ - [x] To clone the repo, remember to clone just the starter branch:
 
 ```git clone --single-branch --branch starter <repo-name>```
 
- - [ ] For this project we are using yarn as our package manager, so to install your depencies run:
+ - [x] For this project we are using yarn as our package manager, so to install your depencies run:
 
 ```yarn install``` 
 
@@ -46,17 +46,17 @@ To complete this project, your UI must do the following:
 
 To complete this project, your frontend code must:
 
-- [ ] Use only pure functions
-- [ ] Use at least one Higher Order Function
-- [ ] Use the array method `map`
-- [ ] Use the ImmutableJS library
+- [x] Use only pure functions
+- [x] Use at least one Higher Order Function
+- [x] Use the array method `map`
+- [x] Use the ImmutableJS library
 
 To complete this project, your backend code must:
 
-- [ ] Be built with Node/Express
-- [ ] Make successful calls to the NASA API
-- [ ] Use pure functions to do any logic necessary
-- [ ] Hide any sensetive information from public view (In other words, use your dotenv file)
+- [x] Be built with Node/Express
+- [x] Make successful calls to the NASA API
+- [x] Use pure functions to do any logic necessary
+- [x] Hide any sensetive information from public view (In other words, use your dotenv file)
 
 ### Above and Beyond
 

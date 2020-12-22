@@ -7,23 +7,28 @@ const createProps = (attrs) => {
   return propsArr.join(' ');
 };
 
-export const createElem = (tagName, baseAttrs = {}) => {
-  return (childHTML = '', attrs = {}) => {
-    const propertyMap = Immutable.mergeDeep(baseAttrs, attrs);
-    if (typeof tagName === 'function') {
-      return tagName(childHTML, propertyMap);
-    }
-    const props = createProps(propertyMap);
-    const inner = typeof childHTML === 'function' ? childHTML() : childHTML;
-    return `<${tagName}${props ? ' ' + props : ''}>${inner}</${tagName}>`;
+export const createElement = (tagName, attrs = {}, inner = '') => {
+  const props = createProps(attrs);
+  return `<${tagName}${props ? ' ' + props : ''}>${inner}</${tagName}>`;
+};
+
+export const createList = (tagName, attrs = {}) => {
+  return (inputs, baseAttrs = {}, activeIndex) => {
+    const children = inputs.map((elem, i) => {
+      const childAttr = {};
+      if (i === activeIndex) {
+        childAttr.class = ['active'];
+      }
+      return createElement(
+        'li',
+        Immutable.mergeDeep(baseAttrs, childAttr),
+        elem
+      );
+    });
+    return createElement(tagName, attrs, children.join(''));
   };
 };
 
-export const createElems = (baseFn) => {
-  return (values) => {
-    return values.map((v) => baseFn(v));
-  };
-};
 /**
  * @param  {HTMLElement} html
  * @param  {string} tag
@@ -36,7 +41,3 @@ export const addEventListenerTo = (elms, ev, evFn) => {
     });
   }
 };
-
-export const li = createElem('li');
-export const ul = createElem('ul');
-export const a = createElem('a');

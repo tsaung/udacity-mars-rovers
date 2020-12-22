@@ -1,92 +1,88 @@
-import { ul, li, a, createElem } from './base.js';
+import { createList, createElement } from './base.js';
 
-export const CurrentRoverInfo = (detail) => {
-  if (!detail) {
-    return `<h3>Please select a rover to reveal detail infos</h3>`;
-  } else {
-    return `<h3>Currently selected rover: ${detail}`;
-  }
-};
+const createNavList = createList('ul', { class: ['nav'] });
+const createImageList = createList('ul', { id: 'gallery' });
+
 /**
  * @param  {Array} menus
  * @param  {String} active
  */
 export const Nav = (menus, active = '') => {
-  const defaultLinkClasses = ['nav-item'];
-
-  const result = menus.map((m) => {
-    const linkClasses = [...defaultLinkClasses];
-    if (active.toLowerCase() === m.toLowerCase()) {
-      linkClasses.push('active');
-    }
-    const link = a(m, {
-      id: m + '-tab',
-      href: `#${m}`,
-      role: 'tab',
-      'data-toggle': 'tab',
-      'aria-controls': m,
-    });
-
-    const listItem = li(link, { class: linkClasses });
-    return listItem;
+  let activeIndex = menus.indexOf(active.toLowerCase());
+  const result = createNavList(menus, { class: ['nav-item'] }, activeIndex);
+  return result;
+};
+/**
+ *
+ * @param {Array} photos
+ */
+export const ImageGallery = (photos) => {
+  if (!photos || !photos.length) {
+    return `<h3>No images found</h3>`;
+  }
+  const images = photos.map((img) =>
+    createElement('img', { class: ['rover-image'], src: img })
+  );
+  const imageList = createImageList(images, {
+    class: ['gallery-item'],
   });
-
-  return ul(result.join(''), {
-    class: ['nav'],
-    id: 'roverTabs',
-    role: 'tablist',
-  });
+  return imageList;
 };
 
-export const Home = (apod) => {
-  if (!apod) {
-    return `<p>Loading</p>`;
+export const Main = (state) => {
+  const { selected_rover, current_rover_data, apod } = state;
+  const Loading = createLoading(apod);
+  if (!selected_rover) {
+    return Loading('Please select a rover');
   } else {
-    return `<p>There should be </p>`;
+    return Rover(current_rover_data, selected_rover, Loading);
   }
 };
 
-export const Rover = (roverInfo) => {
-  if (!roverInfo) {
-    return `Please select an rover`;
-  }
-  const dataList = createElem('dl', { class: ['row'] });
-  const resultArr = Object.keys(roverInfo).map((key) => {
-    return `<dt class="col-sm-3">
-    ${key}
-    </dt>
-    <dd class="col-sm-9">${roverInfo[key]}</dd>`;
-  });
-  const result = dataList(resultArr.join(''));
-  return result;
+export const createLoading = (apod) => {
+  return (text) => {
+    const data = apod.image;
+    const imageUrl =
+      data.media_type === 'image'
+        ? data.hdurl
+        : 'https://apod.nasa.gov/apod/image/2012/VolcanicConjunction_Sojuel_1500.jpg';
+    return `
+    <div id="loading">
+      <div>
+        <h4 class="underline">${text}</h4>
+      </div>
+      <img src="${imageUrl}"/>
+    </div>
+  `;
+  };
 };
+
+export const Rover = (rover, selected_rover, loadingFn) => {
+  if (!rover || rover.name.toLowerCase() !== selected_rover) {
+    return loadingFn(`Enjoy APOD while loading data for ${selected_rover}...`);
+  }
+  return `
+  <div id="rover">
+    <div id="rover-info">
+    ${RoverInfo(rover)}
+    </div>
+    <div>
+      <h2 class="underline">Latest Images</h2>
+    </div>
+
+    ${ImageGallery(rover.photos)}
+  </div>
+  `;
+};
+
 export const RoverInfo = (infos) => {
-  const dataList = createElem('dl', { class: ['row'] });
-  const resultArr = Object.keys(detail).map((key) => {
-    return `<dt class="col-sm-3">
-    ${key}
-    </dt>
-    <dd class="col-sm-9">${detail[key]}</dd>`;
-  });
-  const result = dataList(resultArr.join(''));
-  return result;
-};
-
-export const MainTabs = (mapObj) => {
-  const tabsArr = Object.keys(mapObj).map((name) => {
-    const { active, content } = mapObj[name];
-    return createTab(name, active, content);
-  });
-  return tabsArr.join('');
-};
-
-const createTab = (name, isActive, content = '') => {
-  const createTabElem = createElem('div', {
-    id: name,
-    class: ['tab-pane', 'fade', 'show'],
-    'aria-labelledby': `${name}-tab`,
-  });
-
-  const result = createTabElem(content, { class: isActive ? ['active'] : [] });
-  return result;
+  const { name, launch_date, landing_date, status, max_date } = infos;
+  const items = [
+    `Name: ${name}`,
+    `Launch Date:${launch_date}`,
+    `Landing Date: ${landing_date}`,
+    `Status: ${status}`,
+    `Date the most recent photos were taaken: ${max_date}`,
+  ];
+  return createList('ul')(items);
 };

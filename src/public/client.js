@@ -1,10 +1,4 @@
-import {
-  Nav,
-  MainTabs,
-  Home,
-  CurrentRoverInfo,
-  Rover,
-} from './modules/components.js';
+import { Main, Nav, Rover } from './modules/components.js';
 import { addEventListenerTo } from './modules/base.js';
 
 let store = Immutable.Map({
@@ -41,24 +35,25 @@ const render = async (root, state) => {
 
 // create content
 const App = (state) => {
-  const { apod, rovers, selected_rover, current_rover_data } = state.toObject();
-  const active = selected_rover;
-  const pages = rovers.map((p) => p.toLowerCase());
-  const nav = Nav(pages, active, changeRover);
+  const { apod, rovers, selected_rover, rovers_data } = state.toObject();
   if (!apod) {
     getImageOfTheDay();
     return `<header><h1>Loading...</h1></header>`;
   }
+  const current_rover_data = rovers_data.get(selected_rover);
+  const active = selected_rover;
+  const pages = rovers.map((p) => p.toLowerCase());
+  const nav = Nav(pages, active);
   return `
         <header>
-        <h1>Mars Rovers</h1>
+        <h1 class="underline">Mars Rovers</h1>
         </header>
         <nav>
           ${nav}
         </nav>
         <main>
             <section>
-              ${Rover(current_rover_data)}
+              ${Main({ selected_rover, current_rover_data, apod })}
             </section>
         </main>
         <footer></footer>
@@ -70,55 +65,13 @@ window.addEventListener('load', () => {
   render(root, store);
 });
 
-// ------------------------------------------------------  COMPONENTS
-
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-
-// const Nav = (menus) => {
-//   const aLinks = createElems(createElem('a', { class: ['nav-link'] }))(menus);
-//   const liLinks = createElems(createElem('li', { class: ['nav-item'] }))(
-//     aLinks
-//   );
-//   const navTabs = createElem('ul', { class: ['nav', 'nav-tabs'] });
-
-//   const refactored = navTabs(liLinks.join(''));
-
-//   const list = createElems(createElem('li', { class: ['nav-item'] }))(menus);
-//   const result = navTabs(list);
-//   return refactored;
-// };
-// Example of a pure function that renders infomation requested from the backend
-const ImageOfTheDay = (apod) => {
-  // If image does not already exist, or it is not from today -- request it again
-  const today = new Date();
-  const photodate = new Date(apod.date);
-  console.log(photodate.getDate(), today.getDate());
-
-  console.log(photodate.getDate() === today.getDate());
-  if (!apod || apod.date === today.getDate()) {
-    getImageOfTheDay(store);
-    return `<p>Loading...</p>`;
-  }
-
-  // check if the photo of the day is actually type video!
-  if (apod.image.media_type === 'video') {
-    return `
-            <p>See today's featured video <a href="${apod.image.url}">here</a></p>
-            <p>${apod.image.title}</p>
-            <p>${apod.image.explanation}</p>
-        `;
-  } else {
-    return `
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
-        `;
-  }
-};
-
 // ------------------------------------------------------  API CALLS
 
-// Example API call
 const changeRover = (name) => {
+  const selected_rover = store.get('selected_rover');
+  if (selected_rover === name) {
+    return;
+  }
   getRover(name);
 };
 const getImageOfTheDay = () => {
@@ -140,9 +93,10 @@ const getRover = (name) => {
     fetch('http://localhost:3000/rovers/' + name)
       .then((res) => res.json())
       .then((roverInfo) => {
+        const rover = { ...roverInfo };
+        rover.photos = rover.photos.map((p) => p.img_src);
         updateStore(store, {
-          current_rover_data: roverInfo,
-          rovers_data: store.get('rovers_data').set(name, roverInfo),
+          rovers_data: store.get('rovers_data').set(name, rover),
         });
       });
   }
